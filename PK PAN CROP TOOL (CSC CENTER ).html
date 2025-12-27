@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PK CSC CENTER - Photo & Signature Resize</title>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+}
+
+.header {
+    background: #001f54;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.container {
+    background: orange;
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    flex-wrap: wrap;
+}
+
+.box {
+    background: linear-gradient(to bottom, #001f54, #1e90ff);
+    padding: 20px;
+    width: 350px;
+    border-radius: 15px;
+    color: white;
+}
+
+.top-btn {
+    background: linear-gradient(to right, #4CAF50, #00CED1);
+    padding: 10px;
+    text-align: center;
+    border-radius: 20px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+input[type="file"],
+input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 5px;
+    border: none;
+}
+
+.result {
+    margin-top: 15px;
+    font-size: 13px;
+}
+
+.download-btn {
+    margin-top: 15px;
+    width: 100%;
+    padding: 10px;
+    border-radius: 20px;
+    border: none;
+    background: linear-gradient(to right, #4CAF50, #00CED1);
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    PK CSC CENTER
+</div>
+
+<div class="container">
+
+<!-- PHOTO RESIZE -->
+<div class="box">
+    <div class="top-btn">Photo Resize</div>
+
+    <label>Upload Photo</label>
+    <input type="file" id="photoInput">
+
+    <label>Required Width (px)</label>
+    <input type="number" id="photoWidth" value="213">
+
+    <label>Required Height (px)</label>
+    <input type="number" id="photoHeight" value="213">
+
+    <label>Required DPI</label>
+    <input type="number" value="300">
+
+    <div class="result">
+        Width: 213 px | Height: 213 px | DPI: 300
+    </div>
+
+    <button class="download-btn" onclick="resizeImage('photo')">
+        Download Photo
+    </button>
+</div>
+
+<!-- SIGNATURE RESIZE -->
+<div class="box">
+    <div class="top-btn">Signature Resize</div>
+
+    <label>Upload Signature</label>
+    <input type="file" id="signInput">
+
+    <label>Required Width (px)</label>
+    <input type="number" id="signWidth" value="400">
+
+    <label>Required Height (px)</label>
+    <input type="number" id="signHeight" value="200">
+
+    <label>Required DPI</label>
+    <input type="number" value="600">
+
+    <div class="result">
+        Width: 400 px | Height: 200 px | DPI: 600
+    </div>
+
+    <button class="download-btn" onclick="resizeImage('sign')">
+        Download Signature
+    </button>
+</div>
+
+</div>
+
+<script>
+function resizeImage(type) {
+    let input = type === 'photo' ? 
+        document.getElementById('photoInput') :
+        document.getElementById('signInput');
+
+    let width = type === 'photo' ? 
+        document.getElementById('photoWidth').value :
+        document.getElementById('signWidth').value;
+
+    let height = type === 'photo' ? 
+        document.getElementById('photoHeight').value :
+        document.getElementById('signHeight').value;
+
+    if (!input.files[0]) {
+        alert("Please upload image");
+        return;
+    }
+
+    let file = input.files[0];
+    let img = new Image();
+    let reader = new FileReader();
+
+    reader.onload = function(e) {
+        img.src = e.target.result;
+    };
+
+    img.onload = function() {
+        let canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+
+        let ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+
+        let link = document.createElement("a");
+
+        if (type === 'photo') {
+            link.download = "pk_photo_resized.jpg";
+        } else {
+            link.download = "pk_signature_resized.jpg";
+        }
+
+        link.href = canvas.toDataURL("image/jpeg", 0.9);
+        link.click();
+    };
+
+    reader.readAsDataURL(file);
+}
+</script>
+
+</body>
+</html>
